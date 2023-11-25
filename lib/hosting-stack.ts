@@ -6,7 +6,9 @@ import { Construct } from 'constructs';
 import * as path from 'path';
 
 export class HostingStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: StackProps & {
+    websites: { name: string, domainName: string, deployment: boolean, alternativeDomainNames?: string[] }[]
+  }) {
     super(scope, id, props);
 
     const hostingBucket = new s3.Bucket(this, 'Bucket', {
@@ -15,12 +17,7 @@ export class HostingStack extends Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
 
-    const websites: { name: string, domainName: string, deployment: boolean }[] = [
-      { name: 'SimonKarmanNl', domainName: 'simonkarman.nl', deployment: true },
-      { name: 'KarmanDev', domainName: 'karman.dev', deployment: true }
-    ];
-
-    websites.forEach(website => {
+    props.websites.forEach(website => {
       if (website.deployment) {
         new s3d.BucketDeployment(this, `${website.name}BucketDeployment`, {
           sources: [s3d.Source.asset(`./domains/${website.domainName}`)],
@@ -32,14 +29,17 @@ export class HostingStack extends Stack {
       const origin = new cfo.S3Origin(hostingBucket, {
         originPath: `/${website.domainName}`,
         originAccessIdentity: new cf.OriginAccessIdentity(this, `${website.name}OAC`, {
-          comment: `Allows CloudFront to reach ${website.domainName} in the Simon Karman hosting bucket`
+          comment: `Allows CloudFront to reach ${website.domainName} in the hosting bucket`
         })
       });
 
       const certificate = new cm.Certificate(this, `${website.name}Certificate`, {
         domainName: website.domainName,
         validation: cm.CertificateValidation.fromDns(),
-        subjectAlternativeNames: [`www.${website.domainName}`],
+        subjectAlternativeNames: [
+          `www.${website.domainName}`,
+          ...(website.alternativeDomainNames || [])
+        ],
       });
 
       const viewerRequestFunction = new cf.experimental.EdgeFunction(this, `${website.name}ViewerRequestFunction`, {

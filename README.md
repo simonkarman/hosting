@@ -3,4 +3,4 @@ The hosting for static websites of [Simon Karman](https://www.simonkarman.nl), s
 
 To deploy first make sure that you have added the distributions of the domains to `domains/<domain-name>/` directory and then run `AWS_REGION=us-east-1 npm run cdk deploy`.
 
-> Note: due to CloudFront certificate region restrictions this has to be deployed to the us-east-1 AWS region.
+> Due to CloudFront certificate region restrictions, the AWS region must be set to "us-east-1".
