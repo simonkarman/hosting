@@ -50,7 +50,7 @@ export class HostingStack extends Stack {
 
       new cf.Distribution(this, `${website.name}Distribution`, {
         certificate,
-        domainNames: [website.domainName, `www.${website.domainName}`],
+        domainNames: [website.domainName, `www.${website.domainName}`, ...(website.alternativeDomainNames || [])],
         defaultBehavior: {
           origin,
           viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
