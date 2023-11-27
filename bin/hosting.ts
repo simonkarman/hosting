@@ -9,6 +9,6 @@ new HostingStack(app, 'HostingStack', {
   websites: [
     { name: 'SimonKarmanNl', domainName: 'simonkarman.nl', deployment: true, alternativeDomainNames: ['simonkarman.com'] },
     { name: 'KarmanDev', domainName: 'karman.dev', deployment: true },
-    // { name: 'SimilizationNl', domainName: 'similization.nl', deployment: true },
+    { name: 'Similization', domainName: 'similization.nl', deployment: true },
   ]
 });
