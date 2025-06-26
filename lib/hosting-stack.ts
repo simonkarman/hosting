@@ -107,12 +107,12 @@ export class HostingStack extends Stack {
         errorResponses: [
           {
             httpStatus: 403,
-            responsePagePath: '/index.html',
+            responsePagePath: '/403.html',
             responseHttpStatus: 200
           },
           {
             httpStatus: 404,
-            responsePagePath: '/index.html',
+            responsePagePath: '/404.html',
             responseHttpStatus: 200
           }
         ],
